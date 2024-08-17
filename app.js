@@ -4,7 +4,6 @@ require('dotenv').config();
 const db = require('./db');
 const bodyParser = require('body-parser');
 const routes = require('./routes');
-const agricultureRoutes = require('./routes/agricultureRoutes');
 const cropRoutes = require('./routes/cropRoutes');
 const marketRoutes = require('./routes/marketRoutes');
 const priceRoutes = require('./routes/priceRoutes');
@@ -38,8 +37,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Route setup
 app.use('/api', routes);
-app.use('/api/agriculture', agricultureRoutes);
-
 app.use('/api/crops', cropRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/markets', marketRoutes);
