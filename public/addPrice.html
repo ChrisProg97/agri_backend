@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Price</title>
+    <link rel="icon" href="./logo.jpg" type="image/jpg">
+    <link rel="stylesheet" href="./styles.css" type="text/css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+         rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+         crossorigin="anonymous">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top p-2">
+        <div class="m-1">
+            <img src="./logo.jpg" alt="Logo">
+            <a class="navbar-brand" href="#">Agri-assist-ai</a>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard.html">Create Crop</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="market.html">Create Market</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="addPrice.html">Add Price</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="view-crops.html">View Crops</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="view-markets.html">View markets</a>
+                </li>
+            </ul>
+            <button class="btn btn-danger ms-auto m-1" id="logoutButton">Logout</button>
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Add Price for crop</h2>
+        <form id="addPriceForm" method="POST" class="bg-light p-4 border rounded shadow-sm">
+            <div class="mb-3">
+                <label for="crop">crop</label>
+                <select class="form-control" id="crop" name="crop_id" required>
+                    <!-- Options will be populated dynamically from the database -->
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="market">Market</label>
+                <select class="form-control" id="market" name="market_id" required>
+                    <!-- Options will be populated dynamically from the database -->
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="price">Price (MWK)</label>
+                <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+            </div>
+            <button type="submit" class="btn btn-primary position-relative w-100" id="submitButton">
+                Submit
+                <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
+            </button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+        crossorigin="anonymous"></script>
+    <script>
+        const cropSelect = document.getElementById('crop');
+        const marketSelect = document.getElementById('market');
+
+        // Populate crop and market dropdowns from backend
+        async function fetchDropdownData() {
+            try {
+                const [cropsResponse, marketsResponse] = await Promise.all([
+                    fetch('/api/crops'),
+                    fetch('/api/markets')
+                ]);
+
+                const crops = await cropsResponse.json();
+                const markets = await marketsResponse.json();
+
+                crops.forEach(crop => {
+                    const option = document.createElement('option');
+                    option.value = crop.id;
+                    option.textContent = crop.name;
+                    cropSelect.appendChild(option);
+                });
+
+                markets.forEach(market => {
+                    const option = document.createElement('option');
+                    option.value = market.id;
+                    option.textContent = market.name;
+                    marketSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching dropdown data:', error);
+            }
+        }
+
+        document.getElementById('addPriceForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const crop_id = cropSelect.value;
+            const market_id = marketSelect.value;
+            const price = document.getElementById('price').value;
+            const userId = localStorage.getItem('userId');
+
+            const submitButton = document.getElementById('submitButton');
+            const spinner = submitButton.querySelector('.spinner-border');
+
+            // Disable the button and show the spinner
+            submitButton.disabled = true;
+            spinner.style.display = 'inline-block';
+
+            const response = await fetch('http://localhost:3000/api/prices/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+                body: JSON.stringify({ crop_id, market_id, price, userId }),
+            });
+
+            // Hide the spinner and re-enable the button
+            spinner.style.display = 'none';
+            submitButton.disabled = false;
+
+            if (response.ok) {
+                alert('Price added successfully');
+                document.getElementById('addPriceForm').reset();
+            } else {
+                const data = await response.json();
+                alert(data.error);
+            }
+        });
+
+
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = '/index.html';
+        });
+
+        // Fetch dropdown data on page load
+        fetchDropdownData();
+    </script>
+</body>
+</html>
