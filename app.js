@@ -22,9 +22,9 @@ db.connect()
     console.log("Error connecting to PostgreSQL:", error);
   });
 
-  // Enable CORS for all origins or specify your Flutter app's origin
+ // Enable CORS for all origins
 app.use(cors({
-  origin: 'http://localhost:49636' // Update this to the origin of your Flutter app
+  origin: '*'
 }));
 
 // Middleware setup
