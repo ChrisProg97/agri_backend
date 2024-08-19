@@ -24,7 +24,7 @@ db.connect()
 
   // Enable CORS for all origins or specify your Flutter app's origin
 app.use(cors({
-  origin: 'http://localhost:62019' // Update this to the origin of your Flutter app
+  origin: 'http://localhost:49636' // Update this to the origin of your Flutter app
 }));
 
 // Middleware setup
