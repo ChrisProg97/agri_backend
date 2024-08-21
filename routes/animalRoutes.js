@@ -1,5 +1,5 @@
 const express = require('express');
-const { addAnimal, getAnimal, updateAnimal, deleteAnimal } = require('../services/animalService');
+const { addAnimal, updateAnimal, deleteAnimal, getAnimals } = require('../services/animalService');
 const authMiddleware = require('../middlewares/authMiddleware');
 
 const router = express.Router();
@@ -18,7 +18,7 @@ router.post('/add', authMiddleware, async (req, res) => {
 // Get all Animals (public)
 router.get('/', async (req, res) => {
   try {
-    const Animals = await getAnimal();
+    const Animals = await getAnimals;
     res.status(200).json(Animals);
   } catch (error) {
     res.status(500).json({ error: error.message });
