@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Price and Animal Product</title>
+    <title>Add Price and Animal animal</title>
     <link rel="icon" href="./logo.jpg" type="image/jpg">
     <link rel="stylesheet" href="./styles.css" type="text/css">
     <!-- Bootstrap CSS -->
@@ -69,22 +69,28 @@
             </button>
         </form>
 
-        <!-- Add Animal Product Form -->
-        <h2 class="text-center mb-4 mt-5">Add Animal Product</h2>
-        <form id="addAnimalProductForm" method="POST" class="bg-light p-4 border rounded shadow-sm">
+        <!-- Add Animal animal Form -->
+        <h2 class="text-center mb-4 mt-5">Add Animal Price</h2>
+        <form id="addAnimalForm" method="POST" class="bg-light p-4 border rounded shadow-sm">
             <div class="mb-3">
-                <label for="product_name">Product Name</label>
-                <select class="form-control" id="product" name="product_id" required>
+                <label for="animal">Animal Name</label>
+                <select class="form-control" id="animal" name="animal_id" required>
                     <!-- Options will be populated dynamically from the database -->
                 </select>
             </div>
             <div class="mb-3">
-                <label for="product_price" class="form-label">Price (MWK)</label>
-                <input type="number" id="product_price" name="product_price" class="form-control" step="0.01" required>
+                <label for="market">Market</label>
+                <select class="form-control" id="market" name="market_id" required>
+                    <!-- Options will be populated dynamically from the database -->
+                </select>
             </div>
-            <button type="submit" class="btn btn-primary position-relative w-100" id="animalProductSubmitButton">
+            <div class="mb-3">
+                <label for="animal_price" class="form-label">Price (MWK)</label>
+                <input type="number" id="animal_price" name="animal_price" class="form-control" step="0.01" required>
+            </div>
+            <button type="submit" class="btn btn-primary position-relative w-100" id="animalSubmitButton">
                 Submit
-                <span class="spinner-border spinner-border-sm d-none" id="animalProductSpinner"></span>
+                <span class="spinner-border spinner-border-sm d-none" id="animalSpinner"></span>
             </button>
         </form>
     </div>
@@ -113,19 +119,19 @@
         // Fetch Crop and Market Dropdown Data
         async function fetchDropdownData() {
             try {
-                const [cropsResponse, marketsResponse, productsResponse] = await Promise.all([
+                const [cropsResponse, marketsResponse, animalsResponse] = await Promise.all([
                     fetch('/api/crops'),
                     fetch('/api/markets'),
-                    fetch('/api/crops/products')
+                    fetch('/api/animals')
                 ]);
 
                 const crops = await cropsResponse.json();
                 const markets = await marketsResponse.json();
-                const products = await productsResponse.json();
+                const animals = await animalsResponse.json();
 
                 const cropSelect = document.getElementById('crop');
                 const marketSelect = document.getElementById('market');
-                const productSelect = document.getElementById('product');
+                const animalSelect = document.getElementById('animal');
 
                 crops.forEach(crop => {
                     const option = document.createElement('option');
@@ -141,11 +147,11 @@
                     marketSelect.appendChild(option);
                 });
 
-                products.forEach(product => {
+                animals.forEach(animal => {
                     const option = document.createElement('option');
-                    option.value = product.id;
-                    option.textContent = product.name;
-                    productSelect.appendChild(option);
+                    option.value = animal.id;
+                    option.textContent = animal.name;
+                    animalSelect.appendChild(option);
                 });
             } catch (error) {
                 console.error('Error fetching dropdown data:', error);
@@ -182,7 +188,7 @@
             submitButton.disabled = false;
 
             if (response.ok) {
-                alert('Price added successfully');
+                alert('Animal Price added successfully');
                 document.getElementById('addPriceForm').reset();
             } else {
                 const data = await response.json();
@@ -190,16 +196,17 @@
             }
         });
 
-        // Handle Animal Product Form Submission
-        document.getElementById('addAnimalProductForm').addEventListener('submit', async (event) => {
+         // Handle Animal Price Form Submission
+         document.getElementById('addAnimalForm').addEventListener('submit', async (event) => {
             event.preventDefault();
 
-            const name = document.getElementById('product_name').value;
-            const price = document.getElementById('product_price').value;
+            const animal_id= document.getElementById('animal').value;
+            const market_id = document.getElementById('market').value;
+            const price = document.getElementById('price').value;
             const userId = localStorage.getItem('userId');
 
-            const submitButton = document.getElementById('animalProductSubmitButton');
-            const spinner = document.getElementById('animalProductSpinner');
+            const submitButton = document.getElementById('animalSubmitButton');
+            const spinner = document.getElementById('animalSpinner');
 
             // Disable the button and show the spinner
             submitButton.disabled = true;
@@ -211,7 +218,7 @@
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
-                body: JSON.stringify({ name, price, userId }),
+                body: JSON.stringify({ animal_id, market_id, price, userId }),
             });
 
             // Hide the spinner and re-enable the button
@@ -219,8 +226,8 @@
             submitButton.disabled = false;
 
             if (response.ok) {
-                alert('Animal product added successfully');
-                document.getElementById('addAnimalProductForm').reset();
+                alert('Animal Price added successfully');
+                document.getElementById('addAnimalForm').reset();
             } else {
                 const data = await response.json();
                 alert(data.error);

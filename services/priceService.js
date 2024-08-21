@@ -1,6 +1,6 @@
 const db = require('../db'); // Make sure this points to your database connection
 
-// Add a new price
+// Add a new price for crop
 const addPrice = async (crop_id, market_id, price, added_by) => {
 
   try {
@@ -56,9 +56,6 @@ const getPricesByMarket = async (market_id) => {
     throw new Error(`Error retrieving prices for market: ${error.message}`);
   }
 };
-
-
-
 
 // Get all prices
 const getPrices = async () => {
