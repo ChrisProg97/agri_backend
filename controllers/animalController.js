@@ -1,5 +1,5 @@
 // controllers/cropPriceController.js
-const cropService = require('../services/animalService');
+const animalService = require('../services/animalService');
 
 const addAnimal = async (req, res) => {
   const { name, breed } = req.body;
@@ -15,8 +15,8 @@ const addAnimal = async (req, res) => {
 
 const getAnimals = async (req, res) => {
   try {
-    const crops = await animalService.getAnimals();
-    res.status(200).json(crops);
+    const animals = await animalService.getAnimals();
+    res.status(200).json(animals);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
