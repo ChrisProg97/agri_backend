@@ -52,4 +52,53 @@ router.delete('/delete/:id', authMiddleware, async (req, res) => {
   }
 });
 
+// The code below is for CRUD operation for Crop products
+// Add an Crop product (authenticated)
+router.post('/add/product', authMiddleware, async (req, res) => {
+  const { name } = req.body;
+  try {
+    const result = await addProduct(name, req.user.id); // req.user.id from token
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get all Crop products (public)
+router.get('/get/products', async (req, res) => {
+  try {
+    const crop = await getProducts;
+    res.status(200).json(crop);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update a Crop Product by ID (authenticated)
+router.put('/edit/product/:id', authMiddleware, async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+  try {
+    const updatedProduct = await updateCrop(id, name);
+    res.status(200).json(updatedProduct);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete a Crop product by ID (authenticated)
+router.delete('/delete/product/:id', authMiddleware, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const isDeleted = await deleteProduct(id);
+    if (isDeleted) {
+      res.status(204).end(); // No content
+    } else {
+      res.status(404).json({ error: 'Product not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Price</title>
+    <title>Add Price and Animal Product</title>
     <link rel="icon" href="./logo.jpg" type="image/jpg">
     <link rel="stylesheet" href="./styles.css" type="text/css">
     <!-- Bootstrap CSS -->
@@ -36,7 +36,7 @@
                     <a class="nav-link" href="view-crops.html">View Crops</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="view-markets.html">View markets</a>
+                    <a class="nav-link" href="view-markets.html">View markets</a>
                 </li>
             </ul>
             <button class="btn btn-danger ms-auto m-1" id="logoutButton">Logout</button>
@@ -44,10 +44,11 @@
     </nav>
     
     <div class="container mt-4">
-        <h2 class="text-center mb-4">Add Price for crop</h2>
+        <!-- Add Crop Price Form -->
+        <h2 class="text-center mb-4">Add Crop Price</h2>
         <form id="addPriceForm" method="POST" class="bg-light p-4 border rounded shadow-sm">
             <div class="mb-3">
-                <label for="crop">crop</label>
+                <label for="crop">Crop</label>
                 <select class="form-control" id="crop" name="crop_id" required>
                     <!-- Options will be populated dynamically from the database -->
                 </select>
@@ -62,31 +63,69 @@
                 <label for="price">Price (MWK)</label>
                 <input type="number" class="form-control" id="price" name="price" step="0.01" required>
             </div>
-            <button type="submit" class="btn btn-primary position-relative w-100" id="submitButton">
+            <button type="submit" class="btn btn-primary position-relative w-100" id="priceSubmitButton">
                 Submit
-                <span class="spinner-border spinner-border-sm d-none" id="spinner"></span>
+                <span class="spinner-border spinner-border-sm d-none" id="priceSpinner"></span>
+            </button>
+        </form>
+
+        <!-- Add Animal Product Form -->
+        <h2 class="text-center mb-4 mt-5">Add Animal Product</h2>
+        <form id="addAnimalProductForm" method="POST" class="bg-light p-4 border rounded shadow-sm">
+            <div class="mb-3">
+                <label for="product_name">Product Name</label>
+                <select class="form-control" id="product" name="product_id" required>
+                    <!-- Options will be populated dynamically from the database -->
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="product_price" class="form-label">Price (MWK)</label>
+                <input type="number" id="product_price" name="product_price" class="form-control" step="0.01" required>
+            </div>
+            <button type="submit" class="btn btn-primary position-relative w-100" id="animalProductSubmitButton">
+                Submit
+                <span class="spinner-border spinner-border-sm d-none" id="animalProductSpinner"></span>
             </button>
         </form>
     </div>
 
+    <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
         crossorigin="anonymous"></script>
     <script>
-        const cropSelect = document.getElementById('crop');
-        const marketSelect = document.getElementById('market');
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/index.html';
+                return;
+            }
+            
+            // Extract user ID from token
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            document.getElementById('userId').value = payload.id;
 
-        // Populate crop and market dropdowns from backend
+            // Fetch dropdown data for Crop and Market
+            fetchDropdownData();
+        });
+
+        // Fetch Crop and Market Dropdown Data
         async function fetchDropdownData() {
             try {
-                const [cropsResponse, marketsResponse] = await Promise.all([
+                const [cropsResponse, marketsResponse, productsResponse] = await Promise.all([
                     fetch('/api/crops'),
-                    fetch('/api/markets')
+                    fetch('/api/markets'),
+                    fetch('/api/crops/products')
                 ]);
 
                 const crops = await cropsResponse.json();
                 const markets = await marketsResponse.json();
+                const products = await productsResponse.json();
+
+                const cropSelect = document.getElementById('crop');
+                const marketSelect = document.getElementById('market');
+                const productSelect = document.getElementById('product');
 
                 crops.forEach(crop => {
                     const option = document.createElement('option');
@@ -101,25 +140,33 @@
                     option.textContent = market.name;
                     marketSelect.appendChild(option);
                 });
+
+                products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = product.name;
+                    productSelect.appendChild(option);
+                });
             } catch (error) {
                 console.error('Error fetching dropdown data:', error);
             }
         }
 
+        // Handle Crop Price Form Submission
         document.getElementById('addPriceForm').addEventListener('submit', async (event) => {
             event.preventDefault();
 
-            const crop_id = cropSelect.value;
-            const market_id = marketSelect.value;
+            const crop_id = document.getElementById('crop').value;
+            const market_id = document.getElementById('market').value;
             const price = document.getElementById('price').value;
             const userId = localStorage.getItem('userId');
 
-            const submitButton = document.getElementById('submitButton');
-            const spinner = submitButton.querySelector('.spinner-border');
+            const submitButton = document.getElementById('priceSubmitButton');
+            const spinner = document.getElementById('priceSpinner');
 
             // Disable the button and show the spinner
             submitButton.disabled = true;
-            spinner.style.display = 'inline-block';
+            spinner.classList.remove('d-none');
 
             const response = await fetch('https://agri-backend-8het.onrender.com/api/prices/add', {
                 method: 'POST',
@@ -131,7 +178,7 @@
             });
 
             // Hide the spinner and re-enable the button
-            spinner.style.display = 'none';
+            spinner.classList.add('d-none');
             submitButton.disabled = false;
 
             if (response.ok) {
@@ -143,14 +190,48 @@
             }
         });
 
+        // Handle Animal Product Form Submission
+        document.getElementById('addAnimalProductForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
 
+            const name = document.getElementById('product_name').value;
+            const price = document.getElementById('product_price').value;
+            const userId = localStorage.getItem('userId');
+
+            const submitButton = document.getElementById('animalProductSubmitButton');
+            const spinner = document.getElementById('animalProductSpinner');
+
+            // Disable the button and show the spinner
+            submitButton.disabled = true;
+            spinner.classList.remove('d-none');
+
+            const response = await fetch('https://agri-backend-8het.onrender.com/api/prices/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+                body: JSON.stringify({ name, price, userId }),
+            });
+
+            // Hide the spinner and re-enable the button
+            spinner.classList.add('d-none');
+            submitButton.disabled = false;
+
+            if (response.ok) {
+                alert('Animal product added successfully');
+                document.getElementById('addAnimalProductForm').reset();
+            } else {
+                const data = await response.json();
+                alert(data.error);
+            }
+        });
+
+        // Logout functionality
         document.getElementById('logoutButton').addEventListener('click', () => {
             localStorage.removeItem('token');
             window.location.href = '/index.html';
         });
-
-        // Fetch dropdown data on page load
-        fetchDropdownData();
     </script>
 </body>
 </html>

@@ -49,4 +49,55 @@ const deleteCrop = async (id) => {
   }
 };
 
-module.exports = { addCrop, getCrops, updateCrop, deleteCrop };
+// The code below is for crop products CRUD
+// Add a new Crop product
+const addProduct = async (name, added_by) => {
+  try {
+    const result = await db.one(
+      'INSERT INTO crop_products(name, added_by) VALUES($1, $2) RETURNING id, name, added_by',
+      [name, added_by]
+    );
+    return result;
+  } catch (error) {
+    throw new Error(`Error adding Crop Product: ${error.message}`);
+  }
+};
+
+// Get all crop prices
+const getProducts = async () => {
+  try {
+    const crops = await db.any('SELECT * FROM crop_products');
+    return crops;
+  } catch (error) {
+    throw new Error(`Error retrieving Crop Product: ${error.message}`);
+  }
+};
+
+// Update a crop product by ID
+const updateProduct = async (id, name) => {
+  try {
+    const result = await db.one(
+      'UPDATE crop_products SET name = $1 WHERE id = $2 RETURNING id, name',
+      [name, id]
+    );
+    return result;
+  } catch (error) {
+    throw new Error(`Error updating Crop Product: ${error.message}`);
+  }
+};
+
+// Delete a crop product by ID
+const deleteProduct = async (id) => {
+  try {
+    const result = await db.result(
+      'DELETE FROM crop_products WHERE id = $1',
+      [id]
+    );
+    return result.rowCount > 0; // Return true if a row was deleted
+  } catch (error) {
+    throw new Error(`Error deleting Crop Product: ${error.message}`);
+  }
+};
+
+module.exports = { addCrop, getCrops, updateCrop, deleteCrop, 
+  getProducts, addProduct, updateProduct, deleteProduct };
