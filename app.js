@@ -3,11 +3,11 @@ const cors = require('cors');
 require('dotenv').config();
 const db = require('./db');
 const bodyParser = require('body-parser');
-const routes = require('./routes');
 const cropRoutes = require('./routes/cropRoutes');
 const marketRoutes = require('./routes/marketRoutes');
 const priceRoutes = require('./routes/priceRoutes');
 const userRoutes = require('./routes/userRoutes'); 
+const animalRoutes = require('./routes/animalRoutes');
 const path = require('path');
 
 const app = express();
@@ -36,11 +36,12 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Route setup
-app.use('/api', routes);
+// app.use('/api', routes);
 app.use('/api/crops', cropRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/markets', marketRoutes);
 app.use('/api/prices', priceRoutes); 
+app.use('/api/animals', animalRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
