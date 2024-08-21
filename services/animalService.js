@@ -49,4 +49,56 @@ const deleteAnimal = async (id) => {
   }
 };
 
-module.exports = { addAnimal, getAnimals, updateAnimal, deleteAnimal };
+// The code below is for animal products CRUD
+// Add a new Animal product
+const addProduct = async (name, added_by) => {
+    try {
+      const result = await db.one(
+        'INSERT INTO animal_products(name, added_by) VALUES($1, $2) RETURNING id, name, added_by',
+        [name, added_by]
+      );
+      return result;
+    } catch (error) {
+      throw new Error(`Error adding Animal Product: ${error.message}`);
+    }
+  };
+
+  // Get all Animal prices
+const getProducts = async () => {
+    try {
+      const animals = await db.any('SELECT * FROM animal_products');
+      return animals;
+    } catch (error) {
+      throw new Error(`Error retrieving Animal Product: ${error.message}`);
+    }
+  };
+
+  // Update a Animal product by ID
+const updateProduct = async (id, name) => {
+    try {
+      const result = await db.one(
+        'UPDATE animal_products SET name = $1 WHERE id = $2 RETURNING id, name',
+        [name, id]
+      );
+      return result;
+    } catch (error) {
+      throw new Error(`Error updating Animal Product: ${error.message}`);
+    }
+  };
+
+  // Delete a Animal product by ID
+const deleteProduct = async (id) => {
+    try {
+      const result = await db.result(
+        'DELETE FROM animal_products WHERE id = $1',
+        [id]
+      );
+      return result.rowCount > 0; // Return true if a row was deleted
+    } catch (error) {
+      throw new Error(`Error deleting Animal Product: ${error.message}`);
+    }
+  };
+
+module.exports = { 
+    addAnimal, getAnimals, updateAnimal, deleteAnimal, 
+    getProducts, addProduct, updateProduct, deleteProduct };
