@@ -1,5 +1,5 @@
 const express = require('express');
-const { addAnimal, updateAnimal, deleteAnimal, getAnimals } = require('../services/animalService');
+const { addAnimal, updateAnimal, deleteAnimal, getAnimals, getProducts, addProduct, deleteProduct } = require('../services/animalService');
 const { addAnimalProductPrice, getAnimalPricesWithDetails, getAnimalByMarket, 
   getAnimalProductPrices, updateAnimalProductPrice,
   deleteAnimalProductPrice} = require('../services/productPiceService');
