@@ -36,12 +36,63 @@
                     <a class="nav-link" href="view-crops.html">View Crops</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="view-markets.html">View markets</a>
+                    <a class="nav-link" href="view-markets.html">View Markets</a>
                 </li>
             </ul>
             <button class="btn btn-danger ms-auto m-1" id="logoutButton">Logout</button>
         </div>
     </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5 pt-5">
+        <h2>Add Crop Product Price</h2>
+        <form id="addCropProductForm">
+            <div class="mb-3">
+                <label for="crop_product" class="form-label">Crop Product</label>
+                <select id="crop_product" class="form-select" required>
+                    <option value="">Select Crop Product</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="crop_market" class="form-label">Market</label>
+                <select id="market" class="form-select" required>
+                    <option value="">Select Market</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="crop_price" class="form-label">Price</label>
+                <input type="number" id="crop_price" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <div id="cropProductSpinner" class="spinner-border text-primary d-none" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </form>
+
+        <h2 class="mt-5">Add Animal Product Price</h2>
+        <form id="addAnimalProductForm">
+            <div class="mb-3">
+                <label for="animal_product" class="form-label">Animal Product</label>
+                <select id="animal_product" class="form-select" required>
+                    <option value="">Select Animal Product</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="animal_market" class="form-label">Market</label>
+                <select id="market" class="form-select" required>
+                    <option value="">Select Market</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="animal_price" class="form-label">Price</label>
+                <input type="number" id="animal_price" class="form-control" required>
+            </div>
+            <button type="submit" id="animalProductSubmitButton" class="btn btn-primary">Submit</button>
+            <div id="animalProductSpinner" class="spinner-border text-primary d-none" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </form>
+    </div>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -56,36 +107,32 @@
                 return;
             }
             
-            // Extract user ID from token
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            document.getElementById('userId').value = payload.id;
-
-            // Fetch dropdown data for Crop and Market
+            // Fetch dropdown data for Crop, Animal Products, and Market
             fetchDropdownData();
         });
 
-        // Fetch Crop and Market Dropdown Data
+        // Fetch Dropdown Data for both forms
         async function fetchDropdownData() {
             try {
                 const [cropsResponse, marketsResponse, animalsResponse] = await Promise.all([
                     fetch('/api/crops'),
                     fetch('/api/markets'),
-                    fetch('/api/animals')
+                    fetch('/api/animals/get/products')
                 ]);
 
                 const crops = await cropsResponse.json();
                 const markets = await marketsResponse.json();
                 const animals = await animalsResponse.json();
 
-                const cropSelect = document.getElementById('crop');
+                // Populate Crop Product and Market dropdowns
+                const cropProductSelect = document.getElementById('crop_product');
                 const marketSelect = document.getElementById('market');
-                const animalSelect = document.getElementById('animal');
 
                 crops.forEach(crop => {
                     const option = document.createElement('option');
                     option.value = crop.id;
                     option.textContent = crop.name;
-                    cropSelect.appendChild(option);
+                    cropProductSelect.appendChild(option);
                 });
 
                 markets.forEach(market => {
@@ -95,61 +142,110 @@
                     marketSelect.appendChild(option);
                 });
 
+                // Populate Animal Product and Market dropdowns
+                const animalProductSelect = document.getElementById('animal_product');
+                // const animalMarketSelect = document.getElementById('animal_market');
+
                 animals.forEach(animal => {
                     const option = document.createElement('option');
                     option.value = animal.id;
                     option.textContent = animal.name;
-                    animalSelect.appendChild(option);
+                    animalProductSelect.appendChild(option);
                 });
+
+                // markets.forEach(market => {
+                //     const option = document.createElement('option');
+                //     option.value = market.id;
+                //     option.textContent = market.name;
+                //     animalMarketSelect.appendChild(option);
+                // });
             } catch (error) {
                 console.error('Error fetching dropdown data:', error);
             }
         }
 
-// Handle Animal Product Form Submission
-document.getElementById('addAnimalProductForm').addEventListener('submit', async (event) => {
-    event.preventDefault();
+        // Handle Crop Product Form Submission
+        document.getElementById('addCropProductForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-    const product_id = document.getElementById('animal_product').value;
-    const market_id = document.getElementById('market').value;
-    const price = document.getElementById('price').value;
-    const userId = localStorage.getItem('userId');
+            const product_id = document.getElementById('crop_product').value;
+            const market_id = document.getElementById('crop_market').value;
+            const price = document.getElementById('crop_price').value;
+            const userId = localStorage.getItem('userId');
 
-    const submitButton = document.getElementById('animalProductSubmitButton');
-    const spinner = document.getElementById('animalProductSpinner');
+            const submitButton = document.getElementById('cropProductSubmitButton');
+            const spinner = document.getElementById('cropProductSpinner');
 
-    // Disable the button and show the spinner
-    submitButton.disabled = true;
-    spinner.classList.remove('d-none');
+            // Disable the button and show the spinner
+            submitButton.disabled = true;
+            spinner.classList.remove('d-none');
 
-    const response = await fetch('https://agri-backend-8het.onrender.com/api/prices/add', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({ product_id, market_id, price, userId }),
-    });
+            const response = await fetch('https://agri-backend-8het.onrender.com/api/animals/product/price', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+                body: JSON.stringify({ product_id, market_id, price, userId }),
+            });
 
-    // Hide the spinner and re-enable the button
-    spinner.classList.add('d-none');
-    submitButton.disabled = false;
+            // Hide the spinner and re-enable the button
+            spinner.classList.add('d-none');
+            submitButton.disabled = false;
 
-    if (response.ok) {
-        alert('Animal product added successfully');
-        document.getElementById('addAnimalProductForm').reset();
-    } else {
-        const data = await response.json();
-        alert(data.error);
-    }
-});
+            if (response.ok) {
+                alert('Crop product price added successfully');
+                document.getElementById('addCropProductForm').reset();
+            } else {
+                const data = await response.json();
+                alert(data.error);
+            }
+        });
 
-// Logout functionality
-document.getElementById('logoutButton').addEventListener('click', () => {
-    localStorage.removeItem('token');
-    window.location.href = '/index.html';
-});
+        // Handle Animal Product Form Submission
+        document.getElementById('addAnimalProductForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-</script>
+            const product_id = document.getElementById('animal_product').value;
+            const market_id = document.getElementById('animal_market').value;
+            const price = document.getElementById('animal_price').value;
+            const userId = localStorage.getItem('userId');
+
+            const submitButton = document.getElementById('animalProductSubmitButton');
+            const spinner = document.getElementById('animalProductSpinner');
+
+            // Disable the button and show the spinner
+            submitButton.disabled = true;
+            spinner.classList.remove('d-none');
+
+            const response = await fetch('https://agri-backend-8het.onrender.com/api/prices/add-animal-product-price', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+                body: JSON.stringify({ product_id, market_id, price, userId }),
+            });
+
+            // Hide the spinner and re-enable the button
+            spinner.classList.add('d-none');
+            submitButton.disabled = false;
+
+            if (response.ok) {
+                alert('Animal product price added successfully');
+                document.getElementById('addAnimalProductForm').reset();
+            } else {
+                const data = await response.json();
+                alert(data.error);
+            }
+        });
+
+        // Logout functionality
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            window.location.href = '/index.html';
+        });
+    </script>
 </body>
 </html>
