@@ -1,5 +1,6 @@
 // controllers/cropPriceController.js
 const animalService = require('../services/animalService');
+const productPriceService = require('../services/productPiceService');
 
 const addAnimal = async (req, res) => {
   const { name, breed } = req.body;
@@ -97,6 +98,18 @@ const addProduct = async (req, res) => {
     }
   };
 
+  const getAnimalByMarket = async (req, res) => {
+    console.log("In controller");
+    const { id } = req.params;
+    
+    try {
+      const result = await productPriceService.getAnimalByMarket(id);
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
 module.exports = { 
     addAnimal, getAnimals, getProducts, addProduct, 
-    deleteProduct, updateProduct, updateAnimal, deleteAnimal };
+    deleteProduct, updateProduct, updateAnimal, deleteAnimal, getAnimalByMarket };

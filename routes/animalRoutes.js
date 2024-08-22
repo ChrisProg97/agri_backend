@@ -58,9 +58,9 @@ router.delete('/delete/:id', authMiddleware, async (req, res) => {
 // The code below is for CRUD operation for animal products
 // Add an Animal product (authenticated)
 router.post('/add/product', authMiddleware, async (req, res) => {
-    const { name } = req.body;
+    const { product_name } = req.body;
     try {
-      const result = await addProduct(name, req.user.id); // req.user.id from token
+      const result = await addProduct(product_name, req.user.id); // req.user.id from token
       res.status(201).json(result);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -117,7 +117,7 @@ router.post('/add/product/price', authMiddleware, async (req, res) => {
 });
 
 // Get all Animal products, prices and the market (public)
-router.get('/get/products/price/:id', async (req, res) => {
+router.get('/get/products/price/:market_id', async (req, res) => {
   const { market_id } = req.params;
   try {
     const animalProductPrice = await getAnimalByMarket(market_id);
