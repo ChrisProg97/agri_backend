@@ -21,7 +21,7 @@ router.post('/add', authMiddleware, async (req, res) => {
 // Get all Animals (public)
 router.get('/', async (req, res) => {
   try {
-    const animal = await getAnimals;
+    const animal = await getAnimals();
     res.status(200).json(animal);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -70,7 +70,7 @@ router.post('/add/product', authMiddleware, async (req, res) => {
   // Get all Animal products (public)
 router.get('/get/products', async (req, res) => {
     try {
-      const animal = await getProducts;
+      const animal = await getProducts();
       res.status(200).json(animal);
     } catch (error) {
       res.status(500).json({ error: error.message });
