@@ -1,13 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const priceController = require('../controllers/priceController');
+const animalController = require('../controllers/animalController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-// Add a price (authenticated)
+// Add a crop price (authenticated)
 router.post('/add', authMiddleware, async (req, res) => {
 
     try {
         const result = await priceController.addPrice(req, res ); // Delegate to controller
+        res.status(201).json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Add a animal price (authenticated)
+router.post('/add/animal', authMiddleware, async (req, res) => {
+
+    try {
+        const result = await priceController.addAnimalPrice(req, res ); // Delegate to controller
         res.status(201).json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -28,6 +40,11 @@ router.get('/', async (req, res) => {
 router.get('/details', async (req, res) => {
     await priceController.getPricesWithDetails(req, res);
   });
+
+// Get animal name, market name and price
+router.get('/animal/:market_id', async (req, res) => {
+    await priceController.getAnimalPrices(req, res);
+});
 
 //   Getting details according to market
 router.get('/market/:market_id', async (req, res) => {

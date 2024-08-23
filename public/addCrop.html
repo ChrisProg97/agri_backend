@@ -115,8 +115,8 @@
             }
             
             // Extract user ID from token
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            document.getElementById('userId').value = payload.id;
+            // const payload = JSON.parse(atob(token.split('.')[1]));
+            // document.getElementById('userId').value = payload.id;
         });
 
         document.getElementById('addCropForm').addEventListener('submit', async (event) => {

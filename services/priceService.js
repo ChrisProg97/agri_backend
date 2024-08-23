@@ -14,6 +14,20 @@ const addPrice = async (crop_id, market_id, price, added_by) => {
   }
 };
 
+// Add a new animal price for crop
+const addAnimalPrice = async (animal_id, market_id, price, added_by) => {
+
+  try {
+    const result = await db.one(
+      'INSERT INTO animal_price (animal_id, market_id, price, added_by) VALUES ($1, $2, $3, $4) RETURNING id, animal_id, market_id, price, added_by',
+      [animal_id, market_id, price, added_by]
+    );
+    return result;
+  } catch (error) {
+    throw new Error(`Error adding animal price: ${error.message}`);
+  }
+};
+
 // Getting crop name, market name and price
 const getPricesWithDetails = async () => {
   try {
@@ -34,6 +48,28 @@ const getPricesWithDetails = async () => {
     throw new Error(`Error retrieving prices with details: ${error.message}`);
   }
 };
+
+const getAnimalPrices = async (market_id) => {
+  try {
+    const query = `
+      SELECT 
+        animal_price.id, 
+        animals.name AS animal_name, 
+        markets.name AS market_name, 
+        animal_price.price
+      FROM animal_price
+      JOIN animals ON animal_price.animal_id = animals.id
+      JOIN markets ON animal_price.market_id = markets.id
+      WHERE animal_price.market_id = $1
+    `;
+    
+    const animal_price = await db.any(query, [market_id]);
+    return animal_price;
+  } catch (error) {
+    throw new Error(`Error retrieving animal prices: ${error.message}`);
+  }
+};
+
 
 // Getting the details according to the market
 const getPricesByMarket = async (market_id) => {
@@ -93,4 +129,4 @@ const deletePrice = async (id) => {
   }
 };
 
-module.exports = { addPrice, getPricesWithDetails, getPricesByMarket, getPrices, updatePrice, deletePrice };
+module.exports = { addPrice, addAnimalPrice, getAnimalPrices, getPricesWithDetails, getPricesByMarket, getPrices, updatePrice, deletePrice };

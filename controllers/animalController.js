@@ -23,6 +23,15 @@ const getAnimals = async (req, res) => {
   }
 };
 
+// const getAnimalPrices = async (req, res) => {
+//   try {
+//     const animals = await animalService.getAnimals();
+//     res.status(200).json(animals);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// }
+
 const updateAnimal = async (req, res) => {
     const { id } = req.params;
     const { name, breed } = req.body;
@@ -99,7 +108,6 @@ const addProduct = async (req, res) => {
   };
 
   const getAnimalByMarket = async (req, res) => {
-    console.log("In controller");
     const { id } = req.params;
     
     try {
@@ -111,5 +119,5 @@ const addProduct = async (req, res) => {
   };
 
 module.exports = { 
-    addAnimal, getAnimals, getProducts, addProduct, 
+    addAnimal, getAnimals, getProducts, addProduct,
     deleteProduct, updateProduct, updateAnimal, deleteAnimal, getAnimalByMarket };

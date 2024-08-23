@@ -12,6 +12,28 @@ const addPrice = async (req, res) => {
   }
 };
 
+const addAnimalPrice = async (req, res) => {
+ 
+  const { animal_id, market_id, price, userId } = req.body;
+
+  try {
+    const result = await priceService.addAnimalPrice(animal_id, market_id, price, userId);
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getAnimalPrices = async (req, res) => {
+  const  marketId  = req.params.market_id;
+  try {
+    const anima_price = await priceService.getAnimalPrices(marketId);
+    res.status(200).json(anima_price);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
 const getPricesWithDetails = async (req, res) => {
   try {
     const prices = await priceService.getPricesWithDetails();
@@ -70,4 +92,4 @@ const deletePrice = async (req, res) => {
   }
 };
 
-module.exports = { addPrice, getPricesWithDetails, getPricesByMarket, getPrices, updatePrice, deletePrice };
+module.exports = { addPrice, addAnimalPrice, getAnimalPrices, getPricesWithDetails, getPricesByMarket, getPrices, updatePrice, deletePrice };
