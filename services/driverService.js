@@ -8,7 +8,7 @@ const addDriver = async (firstName, lastName, phone1, phone2, marketId) => {
             RETURNING id, created_at, first_name, last_name, phone_1, phone_2, market_id`,
             [firstName, lastName, phone1, phone2, marketId]
         );
-        return result.rows[0];
+        return result;
     } catch (error) {
         throw new Error(`Error adding driver: ${error.message}`);
     }
@@ -32,7 +32,7 @@ const getDriverById = async (id) => {
         if (result.rows.length === 0) {
             throw new Error('Driver not found');
         }
-        return result.rows[0];
+        return result;
     } catch (error) {
         throw new Error(`Error fetching driver: ${error.message}`);
     }
@@ -50,7 +50,7 @@ const updateDriver = async (id, firstName, lastName, phone1, phone2, marketId) =
         if (result.rows.length === 0) {
             throw new Error('Driver not found');
         }
-        return result.rows[0];
+        return result;
     } catch (error) {
         throw new Error(`Error updating driver: ${error.message}`);
     }
@@ -77,7 +77,7 @@ const getDriversByMarketId = async (marketId) => {
             `SELECT * FROM driver WHERE market_id = $1`,
             [marketId]
         );
-        return result.rows;
+        return result;
     } catch (error) {
         throw new Error(`Error fetching drivers by market_id: ${error.message}`);
     }
