@@ -132,7 +132,7 @@ const getAnimalPricesWithDetails = async () => {
 };
 
 // Getting the details according to the market and Animal Product Prices
-const getAnimalByMarket = async (market_id) => {
+const getAnimalProductPrices = async (market_id) => {
   try {
     const query = `
       SELECT 
@@ -154,14 +154,14 @@ const getAnimalByMarket = async (market_id) => {
 };
 
 // Get all prices
-const getAnimalProductPrices = async () => {
-  try {
-    const prices = await db.any('SELECT * FROM animal_product_prices');
-    return prices;
-  } catch (error) {
-    throw new Error(`Error retrieving animal product prices: ${error.message}`);
-  }
-};
+// const getAnimalProductPrices = async () => {
+//   try {
+//     const prices = await db.any('SELECT * FROM animal_product_prices');
+//     return prices;
+//   } catch (error) {
+//     throw new Error(`Error retrieving animal product prices: ${error.message}`);
+//   }
+// };
 
 // Update a price by ID
 const updateAnimalProductPrice = async (id, product_id, market_id, price) => {
@@ -193,6 +193,6 @@ const deleteAnimalProductPrice = async (id) => {
   module.exports = {
     addCropProductPrice, getCropProductPricesWithDetails, getCropProductPricesByMarket,
     getCropProductPrices, updateCropProductPrice, deleteCropProductPrice, addAnimalProductPrice,
-    getAnimalPricesWithDetails, getAnimalByMarket, getAnimalProductPrices, updateAnimalProductPrice,
+    getAnimalPricesWithDetails, getAnimalProductPrices, updateAnimalProductPrice,
     deleteAnimalProductPrice
   }; 
