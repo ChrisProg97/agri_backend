@@ -67,8 +67,9 @@ router.delete('/delete/:id', authMiddleware, async (req, res) => {
 
 // Get drivers by market_id
 router.get('/by-market/:marketId', async (req, res) => {
+    const market_id = req.params.marketId;
     try {
-        const drivers = await driverController.getDriversByMarketId(req, res);
+        const drivers = await driverService.getDriversByMarketId(market_id);
         res.status(200).json(drivers);
     } catch (error) {
         res.status(500).json({ error: error.message });
