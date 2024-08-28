@@ -8,6 +8,7 @@ const marketRoutes = require('./routes/marketRoutes');
 const priceRoutes = require('./routes/priceRoutes');
 const userRoutes = require('./routes/userRoutes'); 
 const animalRoutes = require('./routes/animalRoutes');
+const driverRoutes = require('./routes/driverRoutes');
 const path = require('path');
 
 const app = express();
@@ -42,6 +43,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/markets', marketRoutes);
 app.use('/api/prices', priceRoutes); 
 app.use('/api/animals', animalRoutes);
+app.use('./api/drivers', driverRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -1,6 +1,6 @@
 const express = require('express');
 const { addAnimal, updateAnimal, deleteAnimal, getAnimals, getProducts, addProduct, deleteProduct } = require('../services/animalService');
-const { addAnimalProductPrice, getAnimalPricesWithDetails, getAnimalByMarket, 
+const { addAnimalProductPrice, getAnimalPricesWithDetails,  
   getAnimalProductPrices, updateAnimalProductPrice,
   deleteAnimalProductPrice} = require('../services/productPiceService');
 const authMiddleware = require('../middlewares/authMiddleware');
@@ -120,7 +120,7 @@ router.post('/add/product/price', authMiddleware, async (req, res) => {
 router.get('/get/products/price/:market_id', async (req, res) => {
   const { market_id } = req.params;
   try {
-    const animalProductPrice = await getAnimalByMarket(market_id);
+    const animalProductPrice = await getAnimalProductPrices(market_id);
     res.status(200).json(animalProductPrice);
   } catch (error) {
     res.status(500).json({ error: error.message });
