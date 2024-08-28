@@ -43,7 +43,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/markets', marketRoutes);
 app.use('/api/prices', priceRoutes); 
 app.use('/api/animals', animalRoutes);
-app.use('./api/drivers', driverRoutes);
+app.use('/api/drivers', driverRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

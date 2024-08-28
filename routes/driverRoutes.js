@@ -1,7 +1,7 @@
 const express = require('express');
+const router = express.Router();
 const driverService = require('../services/driverService'); 
 const authMiddleware = require('../middlewares/authMiddleware');
-const router = express.Router();
 
 // Add a driver (authenticated)
 router.post('/add', authMiddleware, async (req, res) => {
