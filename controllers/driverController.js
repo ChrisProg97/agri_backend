@@ -1,9 +1,9 @@
 const driverService = require('../services/driverService');
 
 exports.addDriver = async (req, res) => {
-    const { firstName, lastName, phone1, phone2, marketId } = req.body;
+    const { firstName, lastName, carType, phone1, phone2, marketId } = req.body;
     try {
-        const newDriver = await driverService.addDriver(firstName, lastName, phone1, phone2, marketId);
+        const newDriver = await driverService.addDriver(firstName, lastName, carType, phone1, phone2, marketId);
         res.status(201).json(newDriver);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -31,9 +31,9 @@ exports.getDriverById = async (req, res) => {
 
 exports.updateDriver = async (req, res) => {
     const { id } = req.params;
-    const { firstName, lastName, phone1, phone2, marketId } = req.body;
+    const { firstName, lastName, carType, phone1, phone2, marketId } = req.body;
     try {
-        const updatedDriver = await driverService.updateDriver(id, firstName, lastName, phone1, phone2, marketId);
+        const updatedDriver = await driverService.updateDriver(id, firstName, lastName, carType, phone1, phone2, marketId);
         if (updatedDriver) {
             res.status(200).json(updatedDriver);
         } else {

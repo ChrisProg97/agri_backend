@@ -5,9 +5,9 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 // Add a driver (authenticated)
 router.post('/add', authMiddleware, async (req, res) => {
-    const { firstName, lastName, phone1, phone2, marketId } = req.body;
+    const { firstName, lastName, carType, phone1, phone2, marketId } = req.body;
     try {
-        const newDriver = await driverService.addDriver(firstName, lastName, phone1, phone2, marketId);
+        const newDriver = await driverService.addDriver(firstName, lastName, carType, phone1, phone2, marketId);
         res.status(201).json(newDriver);
     } catch (error) {
         res.status(500).json({ error: error.message });
