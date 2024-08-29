@@ -4,7 +4,7 @@ const addDriver = async (firstName, lastName, carType, phone1, phone2, marketId)
     try {
         const result = await db.query(
             `INSERT INTO driver (first_name, last_name, car_type, phone_1, phone_2, market_id)
-            VALUES ($1, $2, $3, $4, $5)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id, created_at, first_name, car_type, last_name, phone_1, phone_2, market_id`,
             [firstName, lastName, carType, phone1, phone2, marketId]
         );
@@ -42,7 +42,7 @@ const updateDriver = async (id, firstName, lastName, carType, phone1, phone2, ma
     try {
         const result = await db.query(
             `UPDATE driver
-            SET first_name = $1, last_name = $2, car_type = $car_type, phone_1 = $3, phone_2 = $4, market_id = $5
+            SET first_name = $1, last_name = $2, car_type = $3, phone_1 = $4, phone_2 = $5, market_id = $6
             WHERE id = $6
             RETURNING id, created_at, first_name, car_type, last_name, phone_1, phone_2, market_id`,
             [firstName, lastName, carType, phone1, phone2, marketId, id]
