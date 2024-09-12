@@ -1,6 +1,6 @@
 const db = require('../db'); // Make sure this points to your database connection
 
-// Add a new crop price
+// Add a new crop
 const addCrop = async (name, description, added_by) => {
   try {
     const result = await db.one(
@@ -13,7 +13,7 @@ const addCrop = async (name, description, added_by) => {
   }
 };
 
-// Get all crop prices
+// Get all crop
 const getCrops = async () => {
   try {
     const crops = await db.any('SELECT * FROM crops');
@@ -23,7 +23,7 @@ const getCrops = async () => {
   }
 };
 
-// Update a crop price by ID
+// Update a crop by ID
 const updateCrop = async (id, name, description) => {
   try {
     const result = await db.one(
@@ -36,7 +36,7 @@ const updateCrop = async (id, name, description) => {
   }
 };
 
-// Delete a crop price by ID
+// Delete a crop by ID
 const deleteCrop = async (id) => {
   try {
     const result = await db.result(
@@ -63,7 +63,7 @@ const addProduct = async (name, added_by) => {
   }
 };
 
-// Get all crop prices
+// Get all crop
 const getProducts = async () => {
   try {
     const crops = await db.any('SELECT * FROM crop_products');

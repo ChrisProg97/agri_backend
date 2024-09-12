@@ -1,12 +1,12 @@
 const db = require('../db'); // Make sure this points to your database connection
 
 // Add a new price for crop
-const addPrice = async (crop_id, market_id, price, added_by) => {
+const addPrice = async (crop_id, market_id, price, quantity, added_by) => {
 
   try {
     const result = await db.one(
-      'INSERT INTO prices (crop_id, market_id, price, added_by) VALUES ($1, $2, $3, $4) RETURNING id, crop_id, market_id, price, added_by',
-      [crop_id, market_id, price, added_by]
+      'INSERT INTO prices (crop_id, market_id, price, quantity, added_by) VALUES ($1, $2, $3, $4, $5) RETURNING id, crop_id, market_id, price, quantity, added_by',
+      [crop_id, market_id, price, quantity, added_by]
     );
     return result;
   } catch (error) {
@@ -14,13 +14,13 @@ const addPrice = async (crop_id, market_id, price, added_by) => {
   }
 };
 
-// Add a new animal price for crop
-const addAnimalPrice = async (animal_id, market_id, price, added_by) => {
+// Add a new animal price
+const addAnimalPrice = async (animal_id, market_id, price, quantity, added_by) => {
 
   try {
     const result = await db.one(
-      'INSERT INTO animal_price (animal_id, market_id, price, added_by) VALUES ($1, $2, $3, $4) RETURNING id, animal_id, market_id, price, added_by',
-      [animal_id, market_id, price, added_by]
+      'INSERT INTO animal_price (animal_id, market_id, price, quantity, added_by) VALUES ($1, $2, $3, $4, $5) RETURNING id, animal_id, market_id, price, quantity, added_by',
+      [animal_id, market_id, price, quantity, added_by]
     );
     return result;
   } catch (error) {
@@ -35,7 +35,8 @@ const getPricesWithDetails = async () => {
       SELECT 
         prices.id, 
         crops.name AS crop_name, 
-        markets.name AS market_name, 
+        markets.name AS market_name,
+        prices.quantity, 
         prices.price
       FROM prices
       JOIN crops ON prices.crop_id = crops.id
@@ -56,7 +57,8 @@ const getAnimalPrices = async (market_id) => {
         animal_price.id, 
         animals.name AS animal_name, 
         markets.name AS market_name, 
-        animal_price.price
+        animal_price.price,
+        animal_price.quantity
       FROM animal_price
       JOIN animals ON animal_price.animal_id = animals.id
       JOIN markets ON animal_price.market_id = markets.id
@@ -78,7 +80,8 @@ const getPricesByMarket = async (market_id) => {
       SELECT 
         prices.id, 
         crops.name AS crop_name, 
-        markets.name AS market_name, 
+        markets.name AS market_name,
+        prices.quantity, 
         prices.price
       FROM prices
       JOIN crops ON prices.crop_id = crops.id

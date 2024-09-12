@@ -74,6 +74,10 @@
                 <label for="price">Price (MWK)</label>
                 <input type="number" class="form-control" id="price" name="price" step="0.01" required>
             </div>
+            <div class="mb-3">
+                <label for="crop_quantity">Quantity</label>
+                <input type="text" class="form-control" id="crop_quantity" name="crop_quantity" step="0.01" required>
+            </div>
             <button type="submit" class="btn btn-primary position-relative w-100" id="priceSubmitButton">
                 Submit
                 <span class="spinner-border spinner-border-sm d-none" id="priceSpinner"></span>
@@ -98,6 +102,10 @@
             <div class="mb-3">
                 <label for="animal_price" class="form-label">Price (MWK)</label>
                 <input type="number" id="animal_price" name="animal_price" class="form-control" step="0.01" required>
+            </div>
+            <div class="mb-3">
+                <label for="animal_quantity">Quantity</label>
+                <input type="text" class="form-control" id="animal_quantity" name="animal_quantity" step="0.01" required>
             </div>
             <button type="submit" class="btn btn-primary position-relative w-100" id="animalSubmitButton">
                 Submit
@@ -187,6 +195,7 @@
             const crop_id = document.getElementById('crop').value;
             const market_id = document.getElementById('market').value;
             const price = document.getElementById('price').value;
+            const quantity = document.getElementById('crop_quantity').value;
             const userId = localStorage.getItem('userId');
 
             const submitButton = document.getElementById('priceSubmitButton');
@@ -202,7 +211,7 @@
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
-                body: JSON.stringify({ crop_id, market_id, price, userId }),
+                body: JSON.stringify({ crop_id, market_id, price, quantity, userId }),
             });
 
             // Hide the spinner and re-enable the button
@@ -225,6 +234,7 @@
             const animal_id= document.getElementById('animal').value;
             const market_id = document.getElementById('market').value;
             const price = document.getElementById('animal_price').value;
+            const quantity = document.getElementById('animal_quantity').value;
             const userId = localStorage.getItem('userId');
 
             const submitButton = document.getElementById('animalSubmitButton');
@@ -240,7 +250,7 @@
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
-                body: JSON.stringify({ animal_id, market_id, price, userId }),
+                body: JSON.stringify({ animal_id, market_id, price, quantity, userId }),
             });
 
             // Hide the spinner and re-enable the button

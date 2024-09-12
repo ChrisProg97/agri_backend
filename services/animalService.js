@@ -1,6 +1,6 @@
 const db = require('../db'); // Make sure this points to your database connection
 
-// Add a new Animal price
+// Add a new Animal
 const addAnimal = async (name, breed, added_by) => {
   try {
     const result = await db.one(
@@ -13,7 +13,7 @@ const addAnimal = async (name, breed, added_by) => {
   }
 };
 
-// Get all Animal prices
+// Get all Animal
 const getAnimals = async () => {
   try {
     const animals = await db.any('SELECT * FROM animals');
@@ -23,7 +23,7 @@ const getAnimals = async () => {
   }
 };
 
-// Update a Animal price by ID
+// Update a Animal by ID
 const updateAnimal = async (id, name, breed) => {
   try {
     const result = await db.one(
@@ -36,7 +36,7 @@ const updateAnimal = async (id, name, breed) => {
   }
 };
 
-// Delete a Animal price by ID
+// Delete a Animal by ID
 const deleteAnimal = async (id) => {
   try {
     const result = await db.result(
@@ -63,7 +63,7 @@ const addProduct = async (name, added_by) => {
     }
   };
 
-  // Get all Animal prices
+  // Get all Animal
 const getProducts = async () => {
     try {
       const animals = await db.any('SELECT * FROM animal_products');

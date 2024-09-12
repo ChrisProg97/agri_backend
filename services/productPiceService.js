@@ -3,11 +3,11 @@ const db = require('../db');
 // Code for crop products prices
 
 // Add a new price for crop product
-const addCropProductPrice = async (product_id, market_id, price, added_by) => {
+const addCropProductPrice = async (product_id, market_id, price, quantity, added_by) => {
   try {
     const result = await db.one(
-      'INSERT INTO crop_product_prices (product_id, market_id, price, added_by) VALUES ($1, $2, $3, $4) RETURNING id, product_id, market_id, price, added_by',
-      [product_id, market_id, price, added_by]
+      'INSERT INTO crop_product_prices (product_id, market_id, price, quantity, added_by) VALUES ($1, $2, $3, $4, $5) RETURNING id, product_id, market_id, price, quantity, added_by',
+      [product_id, market_id, price, quantity, added_by]
     );
     return result;
   } catch (error) {
@@ -22,7 +22,8 @@ const getCropProductPricesWithDetails = async () => {
       SELECT 
         prices.id, 
         crop_products.name AS product_name, 
-        markets.name AS market_name, 
+        markets.name AS market_name,
+        prices.quantity, 
         prices.price
       FROM crop_product_prices prices
       JOIN crop_products ON prices.product_id = crop_products.id
@@ -43,7 +44,8 @@ const getCropProductPricesByMarket = async (market_id) => {
       SELECT 
         prices.id, 
         crop_products.name AS product_name, 
-        markets.name AS market_name, 
+        markets.name AS market_name,
+        prices.quantity, 
         prices.price
       FROM crop_product_prices prices
       JOIN crop_products ON prices.product_id = crop_products.id
@@ -69,11 +71,11 @@ const getCropProductPrices = async () => {
 };
 
 // Update a price by ID
-const updateCropProductPrice = async (id, product_id, market_id, price) => {
+const updateCropProductPrice = async (id, product_id, market_id, price, quantity) => {
   try {
     const result = await db.one(
-      'UPDATE crop_product_prices SET product_id = $1, market_id = $2, price = $3 WHERE id = $4 RETURNING id, product_id, market_id, price',
-      [product_id, market_id, price, id]
+      'UPDATE crop_product_prices SET product_id = $1, market_id = $2, price = $3, quantity = $4 WHERE id = $5 RETURNING id, product_id, market_id, price, quantity',
+      [product_id, market_id, price, quantity, id]
     );
     return result;
   } catch (error) {
@@ -98,11 +100,11 @@ const deleteCropProductPrice = async (id) => {
 
  // Code for animal products prices
 // Add a new price for animal product
-const addAnimalProductPrice = async (product_id, market_id, price, added_by) => {
+const addAnimalProductPrice = async (product_id, market_id, price, quantity, added_by) => {
   try {
     const result = await db.one(
-      'INSERT INTO animal_product_prices (product_id, market_id, price, added_by) VALUES ($1, $2, $3, $4) RETURNING id, product_id, market_id, price, added_by',
-      [product_id, market_id, price, added_by]
+      'INSERT INTO animal_product_prices (product_id, market_id, price, quantity, added_by) VALUES ($1, $2, $3, $4, $5) RETURNING id, product_id, market_id, price, quantity, added_by',
+      [product_id, market_id, price, quantity, added_by]
     );
     return result;
   } catch (error) {
@@ -117,7 +119,8 @@ const getAnimalPricesWithDetails = async () => {
       SELECT 
         prices.id, 
         animal_products.name AS product_name, 
-        markets.name AS market_name, 
+        markets.name AS market_name,
+        prices.quantity, 
         prices.price
       FROM animal_product_prices prices
       JOIN animal_products ON prices.product_id = animal_products.id
@@ -139,6 +142,7 @@ const getAnimalProductPrices = async (market_id) => {
         prices.id, 
         animal_products.name AS product_name, 
         markets.name AS market_name, 
+        prices.quantity,
         prices.price
       FROM animal_product_prices prices
       JOIN animal_products ON prices.product_id = animal_products.id
